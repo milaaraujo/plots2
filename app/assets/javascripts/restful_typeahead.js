@@ -6,7 +6,7 @@
   Documentation here: https://github.com/bassjobsen/Bootstrap-3-Typeahead
 **/
 
-jQuery(document).ready(function() {
+$(function() {
   var el = $('input.search-query.typeahead');
   var typeahead = el.typeahead({
     items: 5,
@@ -28,13 +28,19 @@ jQuery(document).ready(function() {
       return item.docTitle;
     },
     updater: function(item) {
-      if (item.hasOwnProperty('docUrl') && item.docUrl) {
+      if (item.hasOwnProperty('showAll') && item.showAll) {
+        window.location = window.location.origin + "/search/" + $('#searchform_input').val();
+      }
+      else if (item.hasOwnProperty('docUrl') && item.docUrl) {
         window.location = window.location.origin + item.docUrl;
       } else {
         window.location = window.location.origin + '/tag/' + item.docTitle;
       }
       item = item.docTitle;
       return item;
-    }
+    },
+    addItem: { docTitle: 'SHOW ALL',
+               showAll: true
+             }
   });
 });

@@ -1,6 +1,5 @@
 # List of documents returned from a search
 class DocList
-  include Enumerable
   attr_accessor :items, :srchParams, :pageNum, :pageCount
 
   def initialize; end
@@ -20,7 +19,7 @@ class DocList
   end
 
   def size
-    @items.count
+    @items.length
   end
 
   def each(&block)
