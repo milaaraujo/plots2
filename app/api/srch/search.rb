@@ -104,7 +104,7 @@ module Srch
     def self.execute(endpoint, params)
       sresult = DocList.new
       search_type = endpoint
-      search_criteria = SearchCriteria.new(params)
+      search_criteria = SearchCriteria.from_params(params)
 
       if search_criteria.valid?
         sresult = ExecuteSearch.new.by(search_type, search_criteria)

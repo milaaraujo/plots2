@@ -1,0 +1,14 @@
+<%= render :partial => "search/nav", :locals => { :section => "search-notes" } %>
+
+<div class="container">
+  <% if @results.present? %>
+    <h3> <%= @results.size %> results found for <%= params[:query] %>. </h3>
+    <!-- <%= render partial: "notes/notes", locals: { notes: @results } %> -->
+  <% else %>
+    <h4>
+      No results found :-(</em>
+      </br>
+      Try looking for our items tagged with <a href="/tag/<%= params[:query] %>"><strong><%= params[:query] %></strong></a>
+    </h4>
+  <% end %>
+</div>

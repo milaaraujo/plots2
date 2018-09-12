@@ -1,0 +1,16 @@
+<%= render :partial => "search/nav", :locals => { :section => "search-profiles" } %>
+
+<div class="container">
+  <% if @profiles.present? %>
+    <h3> <%= @profiles.size %> results found for <%= params[:query] %>. </h3>
+    <%= @profiles.map do |profile| %>
+      <%= profile.username %>
+    <% end %>
+  <% else %>
+    <h4>
+      No results found :-(</em>
+      </br>
+      Try looking for our items tagged with <a href="/tag/<%= params[:query] %>"><strong><%= params[:query] %></strong></a>
+    </h4>
+  <% end %>
+</div>

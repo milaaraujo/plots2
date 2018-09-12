@@ -1,5 +1,6 @@
 # List of documents returned from a search
 class DocList
+  include Enumerable
   attr_accessor :items, :srchParams, :pageNum, :pageCount
 
   def initialize; end
@@ -16,6 +17,14 @@ class DocList
 
   def getDocs
     @items
+  end
+
+  def size
+    @items.count
+  end
+
+  def each(&block)
+    @items.each(&block)
   end
 
   # This subclass is used to auto-generate the RESTful data structure.  It is generally not useful for internal Ruby usage

@@ -22,7 +22,7 @@ Plots2::Application.routes.draw do
   resources :user_sessions
   resources :images
   resources :features
-  resources :searches
+  #resources :searches
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -166,12 +166,19 @@ Plots2::Application.routes.draw do
   get 'likes/node/:id/create' => 'like#create', :as => :add_like
   get 'likes/node/:id/delete' => 'like#delete',  :as => :drop_like
 
-  #Search Pages
-  get 'search/dynamic' => 'searches#dynamic'
-  get 'search/dynamic/:id' => 'searches#dynamic'
-  get 'search/:id' => 'searches#results'
-  get 'search' => 'searches#new'
-  post 'search' => 'searches#new'
+  # #Search Pages
+  # get 'search/dynamic' => 'searches#dynamic'
+  # get 'search/dynamic/:id' => 'searches#dynamic'
+  # get 'search/:id' => 'searches#results'
+  # get 'search' => 'searches#new'
+  # post 'search' => 'searches#new'
+
+  get "search/:query",            :to => "search#all"
+  get "search/:query/notes",      :to => "search#notes"
+  get "search/:query/profiles",   :to => "search#profiles"
+  get "search/:query/questions",  :to => "search#questions"
+  get "search/:query/places",     :to => "search#places"
+  get "search/:query/tags",       :to => "search#tags"
 
   get 'widget/:id' => 'tag#widget'
   get 'blog' => 'tag#blog', :id => "blog"

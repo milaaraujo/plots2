@@ -19,7 +19,7 @@ class SearchServiceFullTextSearchTest < ActiveSupport::TestCase
     sresult = create_profiles_doc_list(users)
 
     params = { srchString: 'steff' }
-    search_criteria = SearchCriteria.new(params)
+    search_criteria = SearchCriteria.from_params(params)
 
     result = SearchService.new.profiles(search_criteria)
 
@@ -37,7 +37,7 @@ class SearchServiceFullTextSearchTest < ActiveSupport::TestCase
       sresult = create_profiles_doc_list(users)
 
       params = { srchString: 'steff' }
-      search_criteria = SearchCriteria.new(params)
+      search_criteria = SearchCriteria.from_params(params)
 
       result = SearchService.new.profiles(search_criteria)
 
