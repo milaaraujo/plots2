@@ -5,8 +5,10 @@ class SearchServiceTest < ActiveSupport::TestCase
 
   def create_profiles_doc_list(list)
     sresult = DocList.new
-    list.each do |match|
-      doc = DocResult.fromSearch(0, 'user', '/profile/' + match.name, match.name, 'USERS', 0)
+    list.each do |user|
+      doc = DocResult.new(docType: 'USERS',
+            docUrl: '/profile/' + user.name,
+            docTitle: user.username)
       sresult.addDoc(doc)
     end
     sresult
@@ -16,7 +18,15 @@ class SearchServiceTest < ActiveSupport::TestCase
     sresult = DocList.new
     list.each do |user|
       blurred = user.has_power_tag("location") ? user.get_value_of_power_tag("location") : false
-        doc = DocResult.fromLocationSearch(user.id, 'people_coordinates', user.path, user.username, 'PLACES', 0, user.lat, user.lon, blurred)
+        doc = DocResult.new(
+          docId: user.id,
+          docType: 'PLACES',
+          docUrl: user.path,
+          docTitle: user.username,
+          latitude: user.lat,
+          longitude: user.lon,
+          blurred: blurred
+        )
       sresult.addDoc(doc)
     end
     sresult
@@ -24,26 +34,42 @@ class SearchServiceTest < ActiveSupport::TestCase
 
   def create_notes_doc_list(notes)
     sresult = DocList.new
-    notes.each do |match|
-      doc = DocResult.fromSearch(match.nid, 'file', match.path, match.title, 'NOTES', 0)
+    notes.each do |note|
+      doc = DocResult.new(
+        docId: note.nid,
+        docType: 'NOTES',
+        docUrl: note.path,
+        docTitle: note.title
+      )
       sresult.addDoc(doc)
     end
     sresult
   end
 
-  def create_tags_doc_list(notes)
+  def create_tags_doc_list(tags)
     sresult = DocList.new
-    notes.each do |match|
-      tagdoc = DocResult.fromSearch(match.nid, 'tag', match.path, match.title, 'TAGS', 0)
+    tags.each do |tag|
+      tagdoc = DocResult.new(
+        docId: tag.nid,
+        docType: 'TAGS',
+        docUrl: tag.path,
+        docTitle: tag.title
+      )
       sresult.addDoc(tagdoc)
     end
     sresult
   end
 
-  def create_questions_doc_list(notes)
+  def create_questions_doc_list(questions)
     sresult = DocList.new
-    notes.each do |match|
-      doc = DocResult.fromSearch(match.nid, 'question-circle', match.path(:question), match.title, 'QUESTIONS', match.answers.length.to_i)
+    questions.each do |question|
+      doc = DocResult.new(
+        docId: question.nid,
+        docType: 'QUESTIONS',
+        docUrl: question.path(:question),
+        docTitle: question.title,
+        score: question.answers.length
+      )
       sresult.addDoc(doc)
     end
     sresult

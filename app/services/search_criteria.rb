@@ -7,7 +7,7 @@ class SearchCriteria
     @sort_by = args[:sort_by]
     @order_direction = args[:order_direction]
     @field = args[:field]
-    @limit = args[:limit]
+    @limit = args[:limit] || 10
   end
 
   def self.from_params(params)
