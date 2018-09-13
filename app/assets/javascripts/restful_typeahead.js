@@ -9,7 +9,7 @@
 $(function() {
   var el = $('input.search-query.typeahead');
   var typeahead = el.typeahead({
-    items: 5,
+    items: 10,
     minLength: 3,
     showCategoryHeader: true,
     autoSelect: false,
@@ -39,7 +39,7 @@ $(function() {
       item = item.docTitle;
       return item;
     },
-    addItem: { docTitle: 'SHOW ALL',
+    addItem: { docTitle: 'View all',
                showAll: true
              }
   });
