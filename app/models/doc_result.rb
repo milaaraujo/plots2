@@ -1,6 +1,6 @@
 # A DocResult is an individual return item for a document (web page) search
 class DocResult
-  attr_accessor :docId, :docType, :docUrl, :docTitle, :docScore, :latitude, :longitude, :blurred
+  attr_accessor :docId, :docType, :docUrl, :docTitle, :docScore, :latitude, :longitude, :blurred, :category
 
   def initialize(args = {})
     @docId = args[:docId]
@@ -11,10 +11,7 @@ class DocResult
     @latitude = args[:latitude]
     @longitude = args[:longitude]
     @blurred = args[:blurred]
-  end
-
-  def category
-    @docType
+    @category = args[:docType]
   end
 
   # This subclass is used to auto-generate the RESTful data structure.  It is generally not useful for internal Ruby usage
