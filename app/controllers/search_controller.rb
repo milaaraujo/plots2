@@ -5,11 +5,11 @@ class SearchController < ApplicationController
   end
 
   def all
-    @results = ExecuteSearch.new.by(:all, @search_criteria)
+    @results = ExecuteSearch.new.by(:all, @search_criteria).values
   end
 
   def notes
-    @notes = ExecuteSearch.new.by(:notes, @search_criteria)
+    @notes = ExecuteSearch.new.by(:notes, @search_criteria).paginate(page: params[:page], per_page: 20)
   end
 
   def profiles
@@ -17,7 +17,7 @@ class SearchController < ApplicationController
   end
 
   def questions
-    @results = ExecuteSearch.new.by(:questions, @search_criteria)
+    @questions = ExecuteSearch.new.by(:questions, @search_criteria)
   end
 
   def places

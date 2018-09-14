@@ -2,10 +2,7 @@
 
 <div class="container">
   <% if @results.present? %>
-    <h3> <%= @results.size %> results found for <%= params[:query] %>. </h3>
-    <%= @results.each do |result| %>
-      result.id
-    <% end %>
+    <%= @results %>
   <% else %>
     <h4>
       No results found :-(</em>

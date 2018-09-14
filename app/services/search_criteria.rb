@@ -1,5 +1,6 @@
 class SearchCriteria
-  attr_reader :query, :tag, :sort_by, :field, :limit
+  attr_reader :query, :tag, :field, :limit
+  attr_accessor :sort_by
 
   def initialize(args)
     @query = args[:query]
@@ -27,10 +28,6 @@ class SearchCriteria
 
   def order_direction
     sanitize_direction(@order_direction)
-  end
-
-  def add_sort_by(value)
-    @sort_by = value
   end
 
   private

@@ -333,3 +333,7 @@ twitter3:
         needs_phone_verification: false
         email: 01namangupta@gmail.com
 
+user_blurred_location:
+  id: 18
+  uid: 18
+  value: 'location:blurred'

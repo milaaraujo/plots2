@@ -1,9 +1,8 @@
 <%= render :partial => "search/nav", :locals => { :section => "search-notes" } %>
 
 <div class="container">
-  <% if @results.present? %>
-    <h3> <%= @results.size %> results found for <%= params[:query] %>. </h3>
-    <!-- <%= render partial: "notes/notes", locals: { notes: @results } %> -->
+  <% if @notes.present? %>
+    <%= render partial: "notes/notes", locals: { notes: @notes } %>
   <% else %>
     <h4>
       No results found :-(</em>

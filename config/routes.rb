@@ -173,7 +173,7 @@ Plots2::Application.routes.draw do
   # get 'search' => 'searches#new'
   # post 'search' => 'searches#new'
 
-  get "search/:query",            :to => "search#all"
+  get "search/:query/all",            :to => "search#all"
   get "search/:query/notes",      :to => "search#notes"
   get "search/:query/profiles",   :to => "search#profiles"
   get "search/:query/questions",  :to => "search#questions"
