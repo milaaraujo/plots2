@@ -2,7 +2,10 @@
 class DocList
   attr_accessor :items, :srchParams, :pageNum, :pageCount
 
-  def initialize; end
+  def initialize(items, search_request)
+    @items = items
+    @search_request = search_request
+  end
 
   def addDoc(ndoc)
     @items ||= []

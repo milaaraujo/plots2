@@ -2,48 +2,28 @@ class SearchService
   def initialize; end
 
   # Run a search in any of the associated systems for references that contain the search string
-  # and package up as a DocResult
   def textSearch_all(search_criteria)
-    sresult = DocList.new
+    notes = textSearch_notes(search_criteria.query)
 
-    # notes
-    noteList = textSearch_notes(search_criteria.query)
-    sresult.addAll(noteList.items)
+    search_criteria.sort_by = "recent"
+    profiles = profiles(search_criteria)
 
-    # Node search
-    Node.limit(5)
-        .order('nid DESC')
-        .where('(type = "page" OR type = "place" OR type = "tool") AND node.status = 1 AND title LIKE ?', '%' + search_criteria.query + '%')
-        .select('title,type,nid,path').each do |node|
-        doc = DocResult.new(
-              docId: node.nid,
-              docType: 'NOTES',
-              docUrl: node.path,
-              docTitle: node.title
-            )
-        sresult.addDoc(doc)
-      end
-    # User profiles
-    search_criteria.add_sort_by("recent")
-    userList = profiles(search_criteria)
-    sresult.addAll(userList.items)
+    tags = textSearch_tags(search_criteria.query)
 
-    # Tags
-    tagList = textSearch_tags(search_criteria.query)
-    sresult.addAll(tagList.items)
-    # maps
-    mapList = textSearch_maps(search_criteria.query)
-    sresult.addAll(mapList.items)
-    # questions
-    qList = textSearch_questions(search_criteria.query)
-    sresult.addAll(qList.items)
+    maps = textSearch_maps(search_criteria.query)
 
-    sresult
+    questions = textSearch_questions(search_criteria.query)
+
+    all_results = { :notes => notes,
+                    :profiles => profiles,
+                    :tags => tags,
+                    :maps => maps,
+                    :questions => questions
+                  }
   end
 
   # Search profiles for matching text with optional order_by=recent param and
   # sorted direction DESC by default
-  # then the list is packaged up as a DocResult
 
   # If no sort_by value present, then it returns a list of profiles ordered by id DESC
   # a recent activity may be a node creation or a node revision
@@ -60,89 +40,33 @@ class SearchService
       end
 
     users = user_scope.limit(search_criteria.limit)
-
-    sresult = DocList.new
-    users.each do |user|
-      doc = DocResult.new(
-                      docType: 'USERS',
-                      docUrl: '/profile/' + user.name,
-                      docTitle: user.username
-                    )
-      sresult.addDoc(doc)
-    end
-
-    sresult
   end
 
-  # Search notes for matching strings and package up as a DocResult
-  def textSearch_notes(srchString)
-    sresult = DocList.new
-
-    notes = find_notes(srchString, 25)
-    notes.each do |note|
-      doc = DocResult.new(
-              docId: note.nid,
-              docType: 'NOTES',
-              docUrl: note.path,
-              docTitle: note.title
-            )
-      sresult.addDoc(doc)
-    end
-
-    sresult
+  def textSearch_notes(srchString, limit = 25)
+    Node.order('nid DESC')
+        .where('type = "note" AND node.status = 1 AND title LIKE ?', '%' + srchString + '%')
+        .distinct
+        .limit(limit)
   end
 
   # Search maps for matching text and package up as a DocResult
   def textSearch_maps(srchString)
-    sresult = DocList.new
-
     maps = Node.where('type = "map" AND node.status = 1 AND title LIKE ?', '%' + srchString + '%')
                .limit(10)
-
-    maps.select('title,type,nid,path').each do |m|
-      doc = DocResult.new(
-        docId: m.nid,
-        docType: 'PLACES',
-        docUrl: m.path,
-        docTitle: m.title
-      )
-
-      sresult.addDoc(doc)
-    end
-
-    sresult
   end
 
-  # Search documents with matching tag values and package up as a DocResult
   # The search string that is passed in is split into tokens, and the tag names are compared and
   # chained to the notes that are tagged with those values
   def textSearch_tags(srchString)
-    sresult = DocList.new
-
-    # Tags
     sterms = srchString.split(' ')
     tlist = Tag.where(name: sterms)
       .joins(:node_tag)
       .joins(:node)
       .where('node.status = 1')
       .select('DISTINCT node.nid,node.title,node.path')
-    tlist.each do |tag|
-      tagdoc = DocResult.new(
-        docId: tag.nid,
-        docType: 'TAGS',
-        docUrl: tag.path,
-        docTitle: tag.title
-      )
-      sresult.addDoc(tagdoc)
-    end
-
-    sresult
   end
 
-  # Search question entries for matching text and package up as a DocResult
   def textSearch_questions(srchString)
-    sresult = DocList.new
-
     questions = Node.where(
       'type = "note" AND node.status = 1 AND title LIKE ?',
       '%' + srchString + '%'
@@ -151,30 +75,13 @@ class SearchService
       .where('term_data.name LIKE ?', 'question:%')
       .order('node.nid DESC')
       .limit(25)
-
-    questions.each do |question|
-      doc = DocResult.new(
-        docId: question.nid,
-        docType: 'QUESTIONS',
-        docUrl: question.path(:question),
-        docTitle: question.title,
-        score: question.answers.length
-      )
-
-      sresult.addDoc(doc)
-    end
-
-    sresult
   end
 
   # Search nearby nodes with respect to given latitude, longitute and tags
-  # and package up as a DocResult
   def tagNearbyNodes(srchString, tagName)
-    sresult = DocList.new
+    raise("Must separate coordinates with ,") unless srchString.include? ","
 
-    #raise("Must separate coordinates with ,") unless srchString.include? ","
-
-    lat, lon =  srchString.split(',')
+    lat, lon = srchString.split(',')
 
     nodes_scope = NodeTag.joins(:tag)
       .where('name LIKE ?', 'lat:' + lat[0..lat.length - 2] + '%')
@@ -193,29 +100,12 @@ class SearchService
       .limit(200)
       .order('node.nid DESC')
 
-    items.each do |item|
-      blurred = false
-
-      item.node_tags.each do |tag|
-        if tag.name == "location:blurred"
-          blurred = true
-          break
-        end
-
-      doc = DocResult.new(
-        docId: item.nid,
-        docType: 'PLACES',
-        docUrl: item.path(:items),
-        docTitle: item.title,
-        score: item.answers.length,
-        latitude: item.lat,
-        longitude: item.lon,
-        blurred: blurred
-      )
-      sresult.addDoc(doc)
+    # selects the items whose node_tags don't have the location:blurred tag
+    items.select do |item|
+      item.node_tags.none? do |node_tag|
+        node_tag.name == "location:blurred"
+      end
     end
-    end
-    sresult
   end
 
   # Returns the location of people with most recent contributions.
@@ -223,27 +113,20 @@ class SearchService
   # returned and as optional parameter a user tag. If the user tag
   # is present, the method returns only the location of people
   # with that specific user tag.
-  def people_locations(srchString, tagName = nil)
-    sresult = DocList.new
-
-    user_scope = find_locations(srchString, tagName)
-
-    user_scope.each do |user|
-      blurred = user.has_power_tag("location") ? user.get_value_of_power_tag("location") : false
-      doc = DocResult.new(
-        docId: user.id,
-        docType: 'PLACES',
-        docUrl: user.path,
-        docTitle: user.username,
-        latitude: user.lat,
-        longitude: user.lon,
-        blurred: blurred
-      )
-
-      sresult.addDoc(doc)
+  def people_locations(srchString, user_tag = nil)
+    user_locations = User.where('rusers.status <> 0')\
+                         .joins(:user_tags)\
+                         .where('value LIKE "lat:%"')\
+                         .includes(:revisions)\
+                         .order("node_revisions.timestamp DESC")\
+                         .distinct
+    if user_tag.present?
+      user_locations = User.joins(:user_tags)\
+                       .where('user_tags.value LIKE ?', user_tag)\
+                       .where(id: user_locations.select("rusers.id"))
     end
 
-    sresult
+    user_locations.limit(25)
   end
 
   def find_users(query, limit, type = nil)
@@ -261,30 +144,5 @@ class SearchService
         .group(:nid)
         .where('node.status': 1)
         .distinct
-  end
-
-  def find_notes(input, limit)
-    Node.order('nid DESC')
-        .where('type = "note" AND node.status = 1 AND title LIKE ?', '%' + input + '%')
-        .distinct
-        .limit(limit)
-  end
-
-  def find_locations(limit, user_tag = nil)
-    user_locations = User.where('rusers.status <> 0')\
-                         .joins(:user_tags)\
-                         .where('value LIKE "lat:%"')\
-                         .includes(:revisions)\
-                         .order("node_revisions.timestamp DESC")\
-                         .distinct
-    if user_tag.present?
-      user_locations = User.joins(:user_tags)\
-                       .where('user_tags.value LIKE ?', user_tag)\
-                       .where(id: user_locations.select("rusers.id"))
-    end
-
-    user_locations = user_locations.limit(limit)
-
-    user_locations
   end
 end
