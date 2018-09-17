@@ -1,23 +1,6 @@
 <div class="list-group">
   <ul class="nav nav-pills">
-    <li class="nav-item">
-      <%= link_to "All", "/search/#{params[:query]}/all", :class => section == "search-all" ? "list-group-item list-group-item-action active" : "list-group-item list-group-item-action" %>
-    </li>
-    <li class="nav-item">
-      <%= link_to "Notes", "/search/#{params[:query]}/notes", :class => section == "search-notes" ? "list-group-item list-group-item-action active" : "list-group-item list-group-item-action" %>
-    </li>
-    <li class="nav-item">
-      <%= link_to "Profiles", "/search/#{params[:query]}/profiles", :class => section == "search-profiles" ? "list-group-item list-group-item-action active" : "list-group-item list-group-item-action" %>
-    </li>
-    <li class="nav-item">
-      <%= link_to "Tags", "/search/#{params[:query]}/tags", :class => section == "search-tags" ? "list-group-item list-group-item-action active" : "list-group-item list-group-item-action" %>
-    </li>
-    <li class="nav-item">
-      <%= link_to "Questions", "/search/#{params[:query]}/questions", :class => section == "search-questions" ? "list-group-item list-group-item-action active" : "list-group-item list-group-item-action" %>
-    </li>
-    <li class="nav-item">
-      <%= link_to "Places", "/search/#{params[:query]}/places", :class => section == "search-places" ? "list-group-item list-group-item-action active" : "list-group-item list-group-item-action" %>
-    </li>
+    <%= create_nav_links(section, params[:query]) %>
     <li class="nav-item">
       <a href="#" class="list-group-item list-group-item-action">Sort by</a>
     </li>

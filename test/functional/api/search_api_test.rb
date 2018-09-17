@@ -28,7 +28,6 @@ class SearchApiTest < ActiveSupport::TestCase
      assert_equal 13,                json['items'][0]['docId']
 
      assert matcher =~ json
-
    end
 
    test 'search all functionality with multiple responses' do
@@ -51,7 +50,7 @@ class SearchApiTest < ActiveSupport::TestCase
     end
 
     test 'search all functionality without search query' do
-       get '/api/srch/all?srchString'
+       get "/api/srch/all?srchString"
        assert last_response.ok?
 
        # Expected search pattern
@@ -277,5 +276,4 @@ class SearchApiTest < ActiveSupport::TestCase
     assert matcher =~ json
 
   end
-
 end

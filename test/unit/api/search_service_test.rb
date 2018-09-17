@@ -2,82 +2,8 @@ require 'test_helper'
 require "minitest/autorun"
 
 class SearchServiceTest < ActiveSupport::TestCase
-
-  def create_profiles_doc_list(list)
-    sresult = DocList.new
-    list.each do |user|
-      doc = DocResult.new(docType: 'USERS',
-            docUrl: '/profile/' + user.name,
-            docTitle: user.username)
-      sresult.addDoc(doc)
-    end
-    sresult
-  end
-
-  def create_people_location_doc_list(list)
-    sresult = DocList.new
-    list.each do |user|
-      blurred = user.has_power_tag("location") ? user.get_value_of_power_tag("location") : false
-        doc = DocResult.new(
-          docId: user.id,
-          docType: 'PLACES',
-          docUrl: user.path,
-          docTitle: user.username,
-          latitude: user.lat,
-          longitude: user.lon,
-          blurred: blurred
-        )
-      sresult.addDoc(doc)
-    end
-    sresult
-  end
-
-  def create_notes_doc_list(notes)
-    sresult = DocList.new
-    notes.each do |note|
-      doc = DocResult.new(
-        docId: note.nid,
-        docType: 'NOTES',
-        docUrl: note.path,
-        docTitle: note.title
-      )
-      sresult.addDoc(doc)
-    end
-    sresult
-  end
-
-  def create_tags_doc_list(tags)
-    sresult = DocList.new
-    tags.each do |tag|
-      tagdoc = DocResult.new(
-        docId: tag.nid,
-        docType: 'TAGS',
-        docUrl: tag.path,
-        docTitle: tag.title
-      )
-      sresult.addDoc(tagdoc)
-    end
-    sresult
-  end
-
-  def create_questions_doc_list(questions)
-    sresult = DocList.new
-    questions.each do |question|
-      doc = DocResult.new(
-        docId: question.nid,
-        docType: 'QUESTIONS',
-        docUrl: question.path(:question),
-        docTitle: question.title,
-        score: question.answers.length
-      )
-      sresult.addDoc(doc)
-    end
-    sresult
-  end
-
   test 'running profiles for specific username' do
     users = [users(:steff1)]
-    sresult = create_profiles_doc_list(users)
 
     params = { srchString: 'steff1' }
     search_criteria = SearchCriteria.from_params(params)
@@ -85,16 +11,11 @@ class SearchServiceTest < ActiveSupport::TestCase
     result = SearchService.new.profiles(search_criteria)
 
     assert_not_nil result
-    assert_equal result.getDocs.size, 1
-
-    assert_equal result.getDocs.to_json, sresult.getDocs.to_json
-    assert_equal result.getDocs.to_json.length, result.getDocs.uniq.to_json.length
-
+    assert_equal result.size, 1
   end
 
   test 'running profiles by username' do
     users = [users(:steff3), users(:steff2), users(:steff1)]
-    sresult = create_profiles_doc_list(users)
 
     params = { srchString: 'steff', field: 'username' }
     search_criteria = SearchCriteria.from_params(params)
@@ -102,61 +23,41 @@ class SearchServiceTest < ActiveSupport::TestCase
     result = SearchService.new.profiles(search_criteria)
 
     assert_not_nil result
-    assert_equal result.getDocs.size, 3
-
-    assert_equal result.getDocs.to_json, sresult.getDocs.to_json
-    assert_equal result.getDocs.to_json.length, result.getDocs.uniq.to_json.length
+    assert_equal result.size, 3
   end
 
   test 'running people locations' do
     users = [users(:bob)]
-    sresult = create_people_location_doc_list(users)
-
     result = SearchService.new.people_locations('10', limit = nil)
 
     assert_not_nil result
-    assert_equal 1, result.items.length
-
-    assert_equal result.getDocs.to_json, sresult.getDocs.to_json
-    assert_equal result.getDocs.to_json.length, result.getDocs.uniq.to_json.length
+    assert_equal result.size, 1
   end
 
   test 'running search notes' do
     notes = [nodes(:blog)]
-    sresult = create_notes_doc_list(notes)
 
     result = SearchService.new.textSearch_notes('Blog')
 
     assert_not_nil result
-    assert_equal 1, result.items.length
+    assert_equal result.size, 1
 
-    assert_equal result.getDocs.to_json, sresult.getDocs.to_json
-    assert_equal result.getDocs.to_json.length, result.getDocs.uniq.to_json.length
   end
 
   test 'running search tags' do
-    notes = [nodes(:one), nodes(:about)]
-    sresult = create_tags_doc_list(notes)
-
+    tags = [node_tags(:awesome)]
     result = SearchService.new.textSearch_tags('awesome')
 
     assert_not_nil result
-    assert_equal 2, result.items.length
-
-    assert_equal result.getDocs.to_json, sresult.getDocs.to_json
-    assert_equal result.getDocs.to_json.length, result.getDocs.uniq.to_json.length
+    assert_equal result.size, 4
   end
 
   test 'running search questions' do
     notes = [nodes(:question3), nodes(:question2)]
-    sresult = create_questions_doc_list(notes)
 
     result = SearchService.new.textSearch_questions('question')
 
     assert_not_nil result
-    assert_equal 2, result.items.length
-
-    assert_equal result.getDocs.to_json, sresult.getDocs.to_json
-    assert_equal result.getDocs.to_json.length, result.getDocs.uniq.to_json.length
+    assert_equal result.size, 2
   end
 end

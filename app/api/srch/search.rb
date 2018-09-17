@@ -22,51 +22,55 @@ module Srch
         results = Search.execute(:all, params)
         results_list = []
 
-        results_list << results[:profiles].map do |model|
-          DocResult.new(
-            docType: 'USERS',
-            docUrl: '/profile/' + model.name,
-            docTitle: model.username
-          )
-        end
+        if results.present?
+          results_list << results[:profiles].map do |model|
+            DocResult.new(
+              docType: 'USERS',
+              docUrl: '/profile/' + model.name,
+              docTitle: model.username
+            )
+          end
 
-        results_list << results[:notes].map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'NOTES',
-            docUrl: model.path,
-            docTitle: model.title
-          )
-        end
+          results_list << results[:notes].map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'NOTES',
+              docUrl: model.path,
+              docTitle: model.title
+            )
+          end
 
-        results_list << results[:tags].map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'TAGS',
-            docUrl: model.path,
-            docTitle: model.title
-          )
-        end
+          results_list << results[:tags].map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'TAGS',
+              docUrl: model.path,
+              docTitle: model.title
+            )
+          end
 
-        results_list << results[:maps].map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'PLACES',
-            docUrl: model.path,
-            docTitle: model.title
-          )
-        end
+          results_list << results[:maps].map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'PLACES',
+              docUrl: model.path,
+              docTitle: model.title
+            )
+          end
 
-        results_list << results[:questions].map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'QUESTIONS',
-            docUrl: model.path(:question),
-            docTitle: model.title,
-            score: model.answers.length
-          )
+          results_list << results[:questions].map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'QUESTIONS',
+              docUrl: model.path(:question),
+              docTitle: model.title,
+              score: model.answers.length
+            )
+          end
+          DocList.new(results_list.flatten, search_request)
+        else
+          DocList.new('', search_request)
         end
-        DocList.new(results_list.flatten, search_request)
       end
 
       # Request URL should be /api/srch/profiles?srchString=QRY[&sort_by=recent&order_direction=desc&field=username]
@@ -80,17 +84,20 @@ module Srch
       end
       get :profiles do
         search_request = SearchRequest.fromRequest(params)
-        result = Search.execute(:profiles, params)
+        results = Search.execute(:profiles, params)
 
-        docs = result.map do |model|
-          DocResult.new(
-            docType: 'USERS',
-            docUrl: '/profile/' + model.name,
-            docTitle: model.username
-          )
+        if results.present?
+          docs = results.map do |model|
+            DocResult.new(
+              docType: 'USERS',
+              docUrl: '/profile/' + model.name,
+              docTitle: model.username
+            )
+          end
+          DocList.new(docs, search_request)
+        else
+          DocList.new('', search_request)
         end
-
-        DocList.new(docs, search_request)
       end
 
       # Request URL should be /api/srch/notes?srchString=QRY
@@ -104,18 +111,22 @@ module Srch
       end
       get :notes do
         search_request = SearchRequest.fromRequest(params)
-        result = Search.execute(:notes, params)
+        results = Search.execute(:notes, params)
 
-        docs = result.map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'NOTES',
-            docUrl: model.path,
-            docTitle: model.title
-          )
+        if results.present?
+          docs = results.map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'NOTES',
+              docUrl: model.path,
+              docTitle: model.title
+            )
+          end
+
+          DocList.new(docs, search_request)
+        else
+          DocList.new('', search_request)
         end
-
-        DocList.new(docs, search_request)
       end
 
       # Request URL should be /api/srch/questions?srchString=QRY
@@ -129,19 +140,23 @@ module Srch
       end
       get :questions do
         search_request = SearchRequest.fromRequest(params)
-        result = Search.execute(:questions, params)
+        results = Search.execute(:questions, params)
 
-        docs = result.map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'QUESTIONS',
-            docUrl: model.path(:question),
-            docTitle: model.title,
-            score: model.answers.length
-          )
+        if results.present?
+          docs = results.map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'QUESTIONS',
+              docUrl: model.path(:question),
+              docTitle: model.title,
+              score: model.answers.length
+            )
+          end
+
+          DocList.new(docs, search_request)
+        else
+          DocList.new('', search_request)
         end
-
-        DocList.new(docs, search_request)
       end
 
       # Request URL should be /api/srch/tags?srchString=QRY
@@ -155,18 +170,22 @@ module Srch
       end
       get :tags do
         search_request = SearchRequest.fromRequest(params)
-        result = Search.execute(:tags, params)
+        results = Search.execute(:tags, params)
 
-        docs = result.map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'TAGS',
-            docUrl: model.path,
-            docTitle: model.title
-          )
+        if results.present?
+          docs = results.map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'TAGS',
+              docUrl: model.path,
+              docTitle: model.title
+            )
+          end
+
+          DocList.new(docs, search_request)
+        else
+          DocList.new('', search_request)
         end
-
-        DocList.new(docs, search_request)
       end
 
       # Request URL should be /api/srch/taglocations?srchString=QRY[&tagName=awesome]
@@ -180,22 +199,25 @@ module Srch
       end
       get :taglocations do
         search_request = SearchRequest.fromRequest(params)
-        result = Search.execute(:taglocations, params)
+        results = Search.execute(:taglocations, params)
 
-        docs = result.map do |model|
-          DocResult.new(
-            docId: model.nid,
-            docType: 'PLACES',
-            docUrl: model.path(:items),
-            docTitle: model.title,
-            score: model.answers.length,
-            latitude: model.lat,
-            longitude: model.lon,
-            blurred: model.blurred?
-          )
+        if results.present?
+          docs = results.map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'PLACES',
+              docUrl: model.path(:items),
+              docTitle: model.title,
+              score: model.answers.length,
+              latitude: model.lat,
+              longitude: model.lon,
+              blurred: model.blurred?
+            )
+          end
+          DocList.new(docs, search_request)
+        else
+          DocList.new('', search_request)
         end
-
-        DocList.new(docs, search_request)
       end
 
       # API TO FETCH QRY RECENT CONTRIBUTORS
@@ -210,21 +232,25 @@ module Srch
       end
       get :peoplelocations do
         search_request = SearchRequest.fromRequest(params)
-        result = Search.execute(:peoplelocations, params)
+        results = Search.execute(:peoplelocations, params)
 
-        docs = result.map do |model|
-          DocResult.new(
-            docId: model.id,
-            docType: 'PLACES',
-            docUrl: model.path,
-            docTitle: model.username,
-            latitude: model.lat,
-            longitude: model.lon,
-            blurred: model.blurred?
-          )
+        if results.present?
+          docs = results.map do |model|
+            DocResult.new(
+              docId: model.id,
+              docType: 'PLACES',
+              docUrl: model.path,
+              docTitle: model.username,
+              latitude: model.lat,
+              longitude: model.lon,
+              blurred: model.blurred?
+            )
+          end
+
+          DocList.new(docs, search_request)
+        else
+          DocList.new('', search_request)
         end
-
-        DocList.new(docs, search_request)
       end
     end
 

@@ -21,7 +21,7 @@ class SearchController < ApplicationController
   end
 
   def places
-    @places = ExecuteSearch.new.by(:taglocations, @search_criteria)
+    @places = SearchService.new.textSearch_maps(@search_criteria.query)
   end
 
   def tags

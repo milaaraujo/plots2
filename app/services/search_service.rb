@@ -18,8 +18,7 @@ class SearchService
                     :profiles => profiles,
                     :tags => tags,
                     :maps => maps,
-                    :questions => questions
-                  }
+                    :questions => questions }
   end
 
   # Search profiles for matching text with optional order_by=recent param and
@@ -126,7 +125,7 @@ class SearchService
                        .where(id: user_locations.select("rusers.id"))
     end
 
-    user_locations.limit(25)
+    user_locations.limit(srchString)
   end
 
   def find_users(query, limit, type = nil)

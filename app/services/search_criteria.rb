@@ -17,7 +17,7 @@ class SearchCriteria
       tag: params[:tagName],
       sort_by: params[:sort_by],
       field: params[:field],
-      limit: params[:limit],
+      limit: params[:limit]
     }
     new(args)
   end

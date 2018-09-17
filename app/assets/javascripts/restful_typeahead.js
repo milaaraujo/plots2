@@ -29,7 +29,7 @@ $(function() {
     },
     updater: function(item) {
       if (item.hasOwnProperty('showAll') && item.showAll) {
-        window.location = window.location.origin + "/search/" + $('#searchform_input').val();
+        window.location = window.location.origin + "/search/" + $('#searchform_input').val() + "/all";
       }
       else if (item.hasOwnProperty('docUrl') && item.docUrl) {
         window.location = window.location.origin + item.docUrl;
