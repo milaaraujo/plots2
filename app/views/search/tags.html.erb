@@ -2,10 +2,7 @@
 
 <div class="container">
   <% if @tags.present? %>
-    <h3> <%= @tags.size %> results found for <%= params[:query] %>. </h3>
-    <%= @tags.map do |tag| %>
-      <%= tag %>
-    <% end %>
+    <%= render partial: 'tag/tags', locals: { power_tag: true, tags: @tags } %>
   <% else %>
     <h4>
       No results found :-(</em>

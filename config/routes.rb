@@ -9,6 +9,7 @@ Plots2::Application.routes.draw do
   # Manually written API functions
   post 'comment/create/token/:id.:format', to: 'comment#create_by_token'
 
+  # do we need this?
   get 'searches/test' => 'searches#test'
   post '/node/update/title' => 'notes#update_title'
 
@@ -173,7 +174,8 @@ Plots2::Application.routes.draw do
   # get 'search' => 'searches#new'
   # post 'search' => 'searches#new'
 
-  get "search/:query/all",            :to => "search#all"
+  get "search",                   :to => "search#new"
+  get "search/:query/all",        :to => "search#all"
   get "search/:query/notes",      :to => "search#notes"
   get "search/:query/profiles",   :to => "search#profiles"
   get "search/:query/questions",  :to => "search#questions"

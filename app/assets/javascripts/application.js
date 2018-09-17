@@ -42,8 +42,8 @@
 //= require jsdiff/diff.js
 //= require main_image.js
 //= require restful_typeahead.js
+//= require search_form.js
 //= require users.js
-//= require searchform.js
 //= require tagging.js
 //= require leaflet_helper
 //= require grids.js
