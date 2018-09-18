@@ -42,7 +42,7 @@
 //= require jsdiff/diff.js
 //= require main_image.js
 //= require restful_typeahead.js
-//= require search_form.js
+//= require searchform.js
 //= require users.js
 //= require tagging.js
 //= require leaflet_helper

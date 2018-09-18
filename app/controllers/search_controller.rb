@@ -4,7 +4,8 @@ class SearchController < ApplicationController
   def new; end
 
   def notes
-    @notes = ExecuteSearch.new.by(:notes, @search_criteria).paginate(page: params[:page], per_page: 20)
+    @notes = SearchService.new.find_nodes(params[:query], 15, params[:order_by].to_s.to_sym)
+                              .paginate(page: params[:page], per_page: 24)
   end
 
   def profiles
@@ -16,7 +17,7 @@ class SearchController < ApplicationController
   end
 
   def places
-    @places = SearchService.new.textSearch_maps(@search_criteria.query).paginate(page: params[:page], per_page: 20)
+    @nodes = ExecuteSearch.new.by(:places, @search_criteria).paginate(page: params[:page], per_page: 20)
   end
 
   def tags
@@ -30,6 +31,6 @@ class SearchController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:query)
+    params.require(:search).permit(:query, :order_by)
   end
 end

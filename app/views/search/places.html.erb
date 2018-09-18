@@ -1,12 +1,12 @@
 <%= render :partial => "search/nav" , :locals => { :section => "search-places" }%>
 
 <div class="container">
-  <% if @maps.present? %>
+  <% if @nodes.present? %>
     <div class="container">
       <h2> Results for <%= params[:query] %></h2>
       <hr>
     </div>
-    <!-- <%= render partial: 'tag/tags', locals: { power_tag: true, tags: @tags } %> -->
+    <%= render partial: 'map/maps', locals: { nodes: @nodes } %>
   <% else %>
     <h4>
       No results found for <%= params[:query] %> :-(

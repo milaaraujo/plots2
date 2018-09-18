@@ -18,6 +18,8 @@ class ExecuteSearch
        return sservice.textSearch_questions(search_criteria.query)
      when :tags
        return sservice.textSearch_tags(search_criteria.query)
+     when :places
+       return sservice.find_maps(search_criteria.query)
      when :peoplelocations
        return sservice.people_locations(search_criteria.query, search_criteria.tag)
      when :taglocations

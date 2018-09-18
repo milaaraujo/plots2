@@ -5,23 +5,12 @@
     <div class="container">
       <h2> Results for <%= params[:query] %></h2>
       <hr>
+      <% @profiles.each do |profile| %>
+        <div class="row">
+          <a href="/search/#{profile.username}"><%= profile.username %></a>
+        </div>
+      <% end %>
     </div>
-    <%= @profiles.each do |user| %>
-      <tr>
-        <td class="visible-sm visible-xs" style="padding-top: 16px;">
-          <img class="img-circle" id="profile-photo" style="width:40px;margin-right:8px;border: 1px solid lightgrey;" src="<%= user.profile_image %>" />
-        </td>
-        <td style="display: flex; align-items: center;">
-          <div class="hidden-sm hidden-xs">
-            <img class="img-circle" id="profile-photo" style="width:40px;margin-right:8px;border: 1px solid lightgrey;" src="<%= user.profile_image %>" />
-          </div>
-          <a style="margin-left: 12px;" href="/profile/<%= user.username %>"><%= user.username %></a>
-        </td>
-        <td style="padding-top:16px;"><%= time_ago_in_words(Time.at(user.last['changed'])) if user.last %></td>
-        <td style="padding-top:16px;"><%= user.node_count %> <%= t('users.list.notes_and_edits') %></td>
-        <td style="padding-top:16px;"><%= distance_of_time_in_words(user.created_at, Time.current, { include_seconds: false, scope: 'datetime.time_ago_in_words' }) %></td>
-       </tr>
-    <% end %>
   <% else %>
     <h4>
       No results found for <%= params[:query] %> :-(

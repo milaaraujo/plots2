@@ -29,7 +29,8 @@ $(function() {
     },
     updater: function(item) {
       if (item.hasOwnProperty('showAll') && item.showAll) {
-        window.location = window.location.origin + "/search/" + $('#searchform_input').val() + "/notes";
+        var query = this.value;
+        window.location = window.location.origin + "/search/notes/" + query;
       }
       else if (item.hasOwnProperty('docUrl') && item.docUrl) {
         window.location = window.location.origin + item.docUrl;

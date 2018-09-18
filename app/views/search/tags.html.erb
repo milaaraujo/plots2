@@ -5,8 +5,13 @@
     <div class="container">
       <h2> Results for <%= params[:query] %></h2>
       <hr>
+
+      <div class="row">
+        <% @tags.each do |tag| %>
+          <p><a href="/tags/<%= tag.title %>"><%= tag.title %></a></p>
+        <% end %>
+      </div>
     </div>
-    <%= render partial: 'tag/tags', locals: { power_tag: true, tags: @tags } %>
   <% else %>
     <h4>
       No results found for <%= params[:query] %> :-(
@@ -15,3 +20,5 @@
     </h4>
   <% end %>
 </div>
+
+<%= will_paginate @tags, :renderer => BootstrapPagination::Rails unless @unpaginated %>

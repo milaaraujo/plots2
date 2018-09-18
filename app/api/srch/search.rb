@@ -252,6 +252,35 @@ module Srch
           DocList.new('', search_request)
         end
       end
+
+      # Request URL should be /api/srch/places?srchString=QRY
+      # Basic implementation from classic plots2 SearchController
+      desc 'Perform a search of places',           hidden: false,
+                                                   is_array: false,
+                                                   nickname: 'srchPlaces'
+
+      params do
+        use :common
+      end
+      get :places do
+        search_request = SearchRequest.fromRequest(params)
+        results = Search.execute(:places, params)
+
+        if results.present?
+          docs = results.map do |model|
+            DocResult.new(
+              docId: model.nid,
+              docType: 'PLACES',
+              docUrl: model.path,
+              docTitle: model.title
+            )
+          end
+
+          DocList.new(docs, search_request)
+        else
+          DocList.new('', search_request)
+        end
+      end
     end
 
     def self.execute(endpoint, params)

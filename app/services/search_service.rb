@@ -10,7 +10,7 @@ class SearchService
 
     tags = textSearch_tags(search_criteria.query)
 
-    maps = textSearch_maps(search_criteria.query)
+    maps = find_maps(search_criteria.query)
 
     questions = textSearch_questions(search_criteria.query)
 
@@ -48,10 +48,9 @@ class SearchService
         .limit(limit)
   end
 
-  # Search maps for matching text and package up as a DocResult
-  def textSearch_maps(srchString)
-    maps = Node.where('type = "map" AND node.status = 1 AND title LIKE ?', '%' + srchString + '%')
-               .limit(10)
+  def find_maps(srchString)
+    Node.where('type = "map" AND node.status = 1 AND title LIKE ?', '%' + srchString + '%')
+        .limit(5)
   end
 
   # The search string that is passed in is split into tokens, and the tag names are compared and
