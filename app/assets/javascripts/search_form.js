@@ -6,6 +6,6 @@ $(function() {
   $('#search_form').submit(function(e){
     e.preventDefault();
     query = $('#search_form_input').val();
-    window.location = "/search/" + query + "/all";
+    window.location = "/search/" + query + "/notes";
   });
 });

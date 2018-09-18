@@ -1,1 +1,17 @@
 <%= render :partial => "search/nav" , :locals => { :section => "search-places" }%>
+
+<div class="container">
+  <% if @maps.present? %>
+    <div class="container">
+      <h2> Results for <%= params[:query] %></h2>
+      <hr>
+    </div>
+    <!-- <%= render partial: 'tag/tags', locals: { power_tag: true, tags: @tags } %> -->
+  <% else %>
+    <h4>
+      No results found for <%= params[:query] %> :-(
+      </br>
+      Try searching <a href="/search">for another topic</a> or looking for our items tagged with <a href="/tag/<%= params[:query] %>"><%= params[:query] %></a>
+    </h4>
+  <% end %>
+</div>

@@ -3,10 +3,6 @@ class SearchController < ApplicationController
 
   def new; end
 
-  def all
-    @results = ExecuteSearch.new.by(:all, @search_criteria).values.paginate(page: params[:page], per_page: 20)
-  end
-
   def notes
     @notes = ExecuteSearch.new.by(:notes, @search_criteria).paginate(page: params[:page], per_page: 20)
   end

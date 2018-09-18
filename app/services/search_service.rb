@@ -73,7 +73,8 @@ class SearchService
       .joins(:tag)
       .where('term_data.name LIKE ?', 'question:%')
       .order('node.nid DESC')
-      .limit(25)
+      .distinct
+      .limit(10)
   end
 
   # Search nearby nodes with respect to given latitude, longitute and tags

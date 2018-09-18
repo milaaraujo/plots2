@@ -2,12 +2,16 @@
 
 <div class="container">
   <% if @notes.present? %>
+    <div class="container">
+      <h2> Results for <%= params[:query] %></h2>
+      <hr>
+    </div>
     <%= render partial: "notes/notes", locals: { notes: @notes } %>
   <% else %>
     <h4>
-      No results found :-(</em>
+      No results found for <%= params[:query] %> :-(
       </br>
-      Try looking for our items tagged with <a href="/tag/<%= params[:query] %>"><strong><%= params[:query] %></strong></a>
+      Try searching <a href="/search">for another topic</a> or looking for our items tagged with <a href="/tag/<%= params[:query] %>"><%= params[:query] %></a>
     </h4>
   <% end %>
 </div>
