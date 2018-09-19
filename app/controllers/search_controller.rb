@@ -17,6 +17,7 @@ class SearchController < ApplicationController
   end
 
   def places
+    # it's called nodes because the map/_maps partials expects nodes objects
     @nodes = ExecuteSearch.new.by(:places, @search_criteria).paginate(page: params[:page], per_page: 20)
   end
 
