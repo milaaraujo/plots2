@@ -70,7 +70,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
   end
 
   test 'browse /search/*' do
-    get '/search/foo'
+    get '/search/notes/foo'
     assert_response :success
   end
 
